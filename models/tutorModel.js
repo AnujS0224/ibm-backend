@@ -14,7 +14,7 @@ const tutorSchema = new mongoose.Schema({
     type: String,
     required: true 
   },
-  Tutorphoto: {
+  photo: {
     type: String,
     required: [true, "Please upload photo"],
   },
@@ -37,7 +37,12 @@ const tutorSchema = new mongoose.Schema({
   reviews: [{ 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Review' 
-  }]
+  }],
+  fees: { 
+    type: Map,
+    of: Number, // Key: subject name, Value: fee for that subject
+    required: true
+  }
 });
 
 const Tutor = mongoose.model('Tutor', tutorSchema);

@@ -14,7 +14,7 @@ const tuitionCenterSchema = new mongoose.Schema({
     type: String,
     required: true 
   },
-  Tuitionphoto: {
+  photo: {
       type: String,
       required: [true, "Please upload photo"],
   },
@@ -25,6 +25,11 @@ const tuitionCenterSchema = new mongoose.Schema({
   courses: {
      type: [String], 
      required: true 
+  },
+  fees: {
+    type: Map,
+    of: Number,
+    required: true
   },
   ratings: { 
     type: Number, 

@@ -1,6 +1,7 @@
 import express from "express"
 import dotenv from  "dotenv"
 import cors from "cors"
+import Stripe from "stripe";
 import connectDB from "./config/db.js"
 import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
@@ -13,6 +14,9 @@ import paymentRoutes from './routes/paymentRoutes.js';
 dotenv.config();
 connectDB();
 
+const stripeKey = process.env.STRIPE_KEY || "";
+
+export const stripe = new Stripe(stripeKey);
 const app = express();
 
 app.use(cors());

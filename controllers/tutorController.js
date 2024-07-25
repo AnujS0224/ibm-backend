@@ -3,12 +3,21 @@ import { hashPassword } from "../helper/authhelper.js";
 
 export const createTutorProfile = async (req, res, next) => {
   try {
-    const { name, email, password, subjects, bio, availability } = req.body;
-    const Tutorphoto=req.file;
+    const { name, email, password, subjects, bio, availability,fees  } = req.body;
+    const photo=req.file;
 
-    if (!name || !email || !password || !bio || !subjects || !availability||!Tutorphoto) {
+    if (!name || !email || !password || !bio || !subjects || !availability|| !fees ||!photo) {
       return res.status(400).send({ message: 'All fields are required' });
     }
+
+    const subjectArray = subjects.split(',').map(subject => subject.trim());
+    const feeObject = JSON.parse(fees);
+
+     // Validate that fees include all subjects
+     const missingFees = subjectArray.filter(subject => !(subject in feeObject));
+     if (missingFees.length > 0) {
+       return res.status(400).send({ message: `Missing fees for subjects: ${missingFees.join(', ')}` });
+     }
 
     const existingTutor = await Tutor.findOne({ email });
     if (existingTutor) {
@@ -16,7 +25,16 @@ export const createTutorProfile = async (req, res, next) => {
     }
 
     const hashedPassword=await hashPassword(password)
-    const tutor = new Tutor({ name, email, password:hashedPassword, subjects, bio, availability,Tutorphoto:Tutorphoto.path });
+    const tutor = new Tutor({
+      name, 
+      email, 
+      password:hashedPassword,
+      subjects:subjectArray, 
+      bio,
+      availability,
+      fees: feeObject,
+      photo:photo.path
+     });
     await tutor.save();
 
     res.status(201).send({
@@ -53,21 +71,31 @@ export const getTutorProfile = async (req, res, next) => {
 export const updateTutorProfile = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, email, subjects, bio, availability } = req.body;
-    const Tutorphoto=req.file;
+    const { name, email, subjects, bio, availability,fees } = req.body;
+    const photo=req.file;
     const tutor=await Tutor.findById(id);
     
     if (!tutor) {
       return res.status(404).send({ message: 'Tutor not found' });
     }
-
+    if (subjects) {
+      tutor.subjects = subjects.split(','); // Handle comma-separated subjects
+    }
+    
+    if (fees) {
+      try {
+        tutor.fees = JSON.parse(fees); // Parse fees if provided
+      } catch (error) {
+        return res.status(400).send({ message: 'Invalid fees format' });
+      }
+    }
+    
     tutor.name=name|| tutor.name;
     tutor.email=email||tutor.email;
-    tutor.subjects=subjects||tutor.subjects;
     tutor.bio=bio||tutor.bio;
     tutor.availability=availability||tutor.availability;
-    if (Tutorphoto) {
-      tutor.Tutorphoto = Tutorphoto.path;
+    if (photo) {
+      tutor.photo = photo.path;
     }
     const updateTutor=await tutor.save();
     res.status(200).json({

@@ -3,10 +3,24 @@ import { hashPassword } from '../helper/authhelper.js';
 
 export const createTuitionCenterProfile = async (req, res, next) => {
   try {
-    const { name, email, password, location, contactNumber, courses, description } = req.body;
-    const Tuitionphoto=req.file;
-    if (!name || !email || !password || !location || !contactNumber || !courses || !description||!Tuitionphoto) {
+    const { name, email, password, location, contactNumber, courses, description,fees  } = req.body;
+    const photo=req.file;
+    if (!name || !email || !password || !location || !contactNumber || !courses || !description||!fees||!photo) {
       return res.status(400).send({ message: 'All fields are required' });
+    }
+
+    const courseArray = courses.split(',').map(course => course.trim());
+    let feeObject;
+    try {
+      feeObject = JSON.parse(fees);
+    } catch (error) {
+      return res.status(400).send({ message: 'Invalid fees format' });
+    }
+
+    // Validate that fees include all courses
+    const missingFees = courseArray.filter(course => !(course in feeObject));
+    if (missingFees.length > 0) {
+      return res.status(400).send({ message: `Missing fees for courses: ${missingFees.join(', ')}` });
     }
 
     const existingCenter = await TuitionCenter.findOne({ email });
@@ -22,9 +36,10 @@ export const createTuitionCenterProfile = async (req, res, next) => {
       password: hashedPassword, 
       location, 
       contactNumber, 
-      courses, 
+      courses:courseArray, 
       description,
-      Tuitionphoto:Tuitionphoto.path 
+      fees:feeObject,
+      photo:photo.path 
     }).save();
 
     res.status(201).send({
@@ -63,8 +78,8 @@ export const getTuitionCenterProfile = async (req, res, next) => {
 export const updateTuitionCenterProfile = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, email, password, location, contactNumber, courses, description } = req.body;
-    const Tuitionphoto =req.file;
+    const { name, email, password, location, contactNumber, courses, description,fees} = req.body;
+    const photo =req.file;
     const tuitionCenter = await TuitionCenter.findById(id);
 
     if (!tuitionCenter) {
@@ -75,10 +90,17 @@ export const updateTuitionCenterProfile = async (req, res, next) => {
     tuitionCenter.email = email || tuitionCenter.email;
     tuitionCenter.location = location || tuitionCenter.location;
     tuitionCenter.contactNumber = contactNumber || tuitionCenter.contactNumber;
-    tuitionCenter.courses = courses || tuitionCenter.courses;
+    tuitionCenter.courses =  courses ? courses.split(',').map(course => course.trim()) : tuitionCenter.courses;
     tuitionCenter.description = description || tuitionCenter.description;
-    if (Tuitionphoto) {
-      tuitionCenter.Tuitionphoto = Tuitionphoto.path;
+    if (photo) {
+      tuitionCenter.photo = photo.path;
+    }
+    if (fees) {
+      try {
+        tuitionCenter.fees = JSON.parse(fees); 
+      } catch (error) {
+        return res.status(400).send({ message: 'Invalid fees format' });
+      }
     }
     const updatedTuitionCenter = await tuitionCenter.save();
 
