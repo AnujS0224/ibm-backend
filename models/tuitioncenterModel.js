@@ -1,16 +1,23 @@
 import mongoose from 'mongoose';
 
 const tuitionCenterSchema = new mongoose.Schema({
-  userId: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'User', 
+  name: { 
+    type: String, 
+    required: true
+    },
+  email: { 
+    type: String,
+    required: true, 
+    unique: true
+    },
+  password: { 
+    type: String,
     required: true 
-  },
+    },
   location: { 
     type: String, 
     required: true
   },
-
   courses: {
      type: [String], 
      required: true 
@@ -18,6 +25,10 @@ const tuitionCenterSchema = new mongoose.Schema({
   ratings: { 
     type: Number, 
     default: 0 
+  },
+  description:{
+    type:String,
+    required:true
   },
   reviews: [{
     type: mongoose.Schema.Types.ObjectId, 

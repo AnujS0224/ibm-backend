@@ -1,33 +1,32 @@
 import mongoose from 'mongoose';
 
 const reviewSchema = new mongoose.Schema({
-  userId: { 
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
-    },
+  },
   reviewText: {
     type: String,
-    required: true 
-    },
-  rating: { 
+    required: true
+  },
+  rating: {
     type: Number,
-    required: true 
-    },
-  reviewedEntityId: { 
+    required: true,
+    min: 1,
+    max: 5
+  },
+  reviewedEntityId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true 
-    },
-  reviewedEntityType: { 
+    required: true,
+    refPath: 'reviewedEntityType'
+  },
+  reviewedEntityType: {
     type: String,
-    enum: ['Tutor', 'TuitionCenter'], 
-    required: true 
-    },
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
-    }
-});
+    required: true,
+    enum: ['Tutor', 'TuitionCenter']
+  }
+}, { timestamps: true });
 
 const Review = mongoose.model('Review', reviewSchema);
 export default Review;

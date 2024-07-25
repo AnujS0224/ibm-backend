@@ -1,12 +1,11 @@
 import express from 'express';
-import { getUserProfile, updateUserProfile } from '../controllers/userController.js';
+import { register, login, forgotPassword } from '../controllers/userController.js';
 
 const router = express.Router();
 
-// Route to get a user profile by ID
-router.get('/:id', getUserProfile);
-
-// Route to update a user profile by ID
-router.put('/:id', updateUserProfile);
+// Auth routes
+router.post('/register', register);
+router.post('/login', login);
+router.post('/forgot-password', forgotPassword);
 
 export default router;
