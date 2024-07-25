@@ -36,6 +36,9 @@ export const deleteUser = async (req, res) => {
 };
 
 
+
+
+
 export const getAllTutors = async (req,res)=>{
   try {
     const tutors = await Tutor.find();
