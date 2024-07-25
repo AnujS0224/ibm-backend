@@ -4,7 +4,7 @@ import { createPayment, updatePaymentStatus } from '../controllers/paymentContro
 const router = express.Router();
 
 // Payment routes
-router.post('/create', createPayment);
+router.post('/create/:id', createPayment);
 router.post('/update-status', updatePaymentStatus);
 
 export default router;
