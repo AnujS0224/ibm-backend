@@ -87,3 +87,35 @@ export const deleteReview = async (req, res) => {
     res.status(500).send({ message: 'Error deleting review', error });
   }
 }
+
+// Edit a review
+
+export const updateReview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId, reviewText, rating } = req.body;
+
+    if (!id || !userId || !reviewText || rating == null) {
+      return res.status(400).send({ message: 'All fields are required' });
+    }
+
+    const review = await Review.findById(id);
+    if (!review) {
+      return res.status(404).send({ message: 'Review not found' });
+    }
+
+    if (review.userId.toString() !== userId) {
+      return res.status(403).send({ message: 'Not Authorized' });
+    }
+
+    review.reviewText = reviewText;
+    review.rating = rating;
+    await review.save();
+
+    res.status(200).send({ message: 'Review Updated', review });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Error Updating', error });
+  }
+};
+
