@@ -4,8 +4,9 @@ import { hashPassword } from "../helper/authhelper.js";
 export const createTutorProfile = async (req, res, next) => {
   try {
     const { name, email, password, subjects, bio, availability } = req.body;
+    const Tutorphoto=req.file;
 
-    if (!name || !email || !password || !bio || !subjects || !availability) {
+    if (!name || !email || !password || !bio || !subjects || !availability||!Tutorphoto) {
       return res.status(400).send({ message: 'All fields are required' });
     }
 
@@ -15,7 +16,7 @@ export const createTutorProfile = async (req, res, next) => {
     }
 
     const hashedPassword=await hashPassword(password)
-    const tutor = new Tutor({ name, email, password:hashedPassword, subjects, bio, availability });
+    const tutor = new Tutor({ name, email, password:hashedPassword, subjects, bio, availability,Tutorphoto:Tutorphoto.path });
     await tutor.save();
 
     res.status(201).send({
@@ -53,6 +54,7 @@ export const updateTutorProfile = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, email, subjects, bio, availability } = req.body;
+    const Tutorphoto=req.file;
     const tutor=await Tutor.findById(id);
     
     if (!tutor) {
@@ -64,7 +66,9 @@ export const updateTutorProfile = async (req, res, next) => {
     tutor.subjects=subjects||tutor.subjects;
     tutor.bio=bio||tutor.bio;
     tutor.availability=availability||tutor.availability;
-
+    if (Tutorphoto) {
+      tutor.Tutorphoto = Tutorphoto.path;
+    }
     const updateTutor=await tutor.save();
     res.status(200).json({
       success:true, message: 

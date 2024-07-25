@@ -4,8 +4,8 @@ import { hashPassword } from '../helper/authhelper.js';
 export const createTuitionCenterProfile = async (req, res, next) => {
   try {
     const { name, email, password, location, contactNumber, courses, description } = req.body;
-
-    if (!name || !email || !password || !location || !contactNumber || !courses || !description) {
+    const Tuitionphoto=req.file;
+    if (!name || !email || !password || !location || !contactNumber || !courses || !description||!Tuitionphoto) {
       return res.status(400).send({ message: 'All fields are required' });
     }
 
@@ -23,7 +23,8 @@ export const createTuitionCenterProfile = async (req, res, next) => {
       location, 
       contactNumber, 
       courses, 
-      description 
+      description,
+      Tuitionphoto:Tuitionphoto.path 
     }).save();
 
     res.status(201).send({
@@ -63,7 +64,7 @@ export const updateTuitionCenterProfile = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, email, password, location, contactNumber, courses, description } = req.body;
-    
+    const Tuitionphoto =req.file;
     const tuitionCenter = await TuitionCenter.findById(id);
 
     if (!tuitionCenter) {
@@ -76,7 +77,9 @@ export const updateTuitionCenterProfile = async (req, res, next) => {
     tuitionCenter.contactNumber = contactNumber || tuitionCenter.contactNumber;
     tuitionCenter.courses = courses || tuitionCenter.courses;
     tuitionCenter.description = description || tuitionCenter.description;
-
+    if (Tuitionphoto) {
+      tuitionCenter.Tuitionphoto = Tuitionphoto.path;
+    }
     const updatedTuitionCenter = await tuitionCenter.save();
 
     res.status(200).json({

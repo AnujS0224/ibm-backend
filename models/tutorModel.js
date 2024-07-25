@@ -14,6 +14,10 @@ const tutorSchema = new mongoose.Schema({
     type: String,
     required: true 
   },
+  Tutorphoto: {
+    type: String,
+    required: [true, "Please upload photo"],
+  },
   bio:{
     type:String,
     required:true
