@@ -128,3 +128,16 @@ export const deleteTutorProfile = async (req, res, next) => {
     });
   }
 };
+
+export const getAllTutors = async (req, res, next) => {
+  try {
+    const tutors = await Tutor.find();
+    res.status(200).send({success:true,tutors});
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'Error fetching tutors',
+      error,
+    });
+  }
+};
