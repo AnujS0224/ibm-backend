@@ -78,33 +78,35 @@ export const login= async (req, res) => {
 }
 };
 
-export const forgotPassword= async (req,res)=>{
-    try{
-        const {email,newpassword}=req.body
-        if(!email||!newpassword){
-            res.status(400).send({message:'All the fields are mandatory'})
-        }
-        //check
-        const user=await UserModel.findOne({email});
-        if(!user){
-            return res.status(404).send({
-                success:false,
-                message:"Wrong Email",
-            });
-        }
-        const hashed=await hashPassword(newpassword);
-        await UserModel.findByIdAndUpdate(user._id,{password:hashed});
-        res.status(200).send({
-            success:true,
-            message:"Password Reset Successfully",
+export const forgotPassword = async (req, res) => {
+    try {
+      const { email, newpassword } = req.body;
+      if (!email || !newpassword) {
+        return res.status(400).send({ message: 'All the fields are mandatory' });
+      }
+      const user = await UserModel.findOne({ email });
+      if (!user) {
+        return res.status(404).send({
+          success: false,
+          message: "Wrong Email",
         });
+      }
+  
+      const hashed = await hashPassword(newpassword);
+      await UserModel.findByIdAndUpdate(user._id, { password: hashed });
+  
+      return res.status(200).send({
+        success: true,
+        message: "Password Reset Successfully",
+      });
+  
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({
+        success: false,
+        message: 'Something went wrong',
+        error
+      });
     }
-    catch(error){
-        console.log(error)
-        res.status(500).send({
-            success:false,
-            message:'Something went wrong',
-            error
-        })
-    }
-}
+  };
+  
