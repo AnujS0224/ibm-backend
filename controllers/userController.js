@@ -6,7 +6,7 @@ export const register = async (req, res) => {
     try {
     const { name, email, password,role } = req.body;
     const photo=req.file;
-    if(!name || !email || !password || !role || !photo) 
+    if(!name || !email || !password  || !photo) 
         return res.send({message:'All the fields are mandatory'})
 
     const existinguser=await UserModel.findOne({email})
