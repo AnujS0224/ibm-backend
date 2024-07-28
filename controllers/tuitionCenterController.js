@@ -74,7 +74,6 @@ export const getTuitionCenterProfile = async (req, res, next) => {
   }
 };
 
-// Update a tuition center profile by ID
 export const updateTuitionCenterProfile = async (req, res, next) => {
   try {
     const { id } = req.params;

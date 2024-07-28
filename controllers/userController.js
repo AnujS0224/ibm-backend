@@ -1,5 +1,7 @@
 import { comparePassword, hashPassword } from "../helper/authhelper.js";
 import UserModel from '../models/userModel.js';
+import TutorModel from '../models/tutorModel.js';
+import TuitionCenterModel from '../models/tuitioncenterModel.js';
 import JWT from 'jsonwebtoken';
 
 export const register = async (req, res) => {
@@ -43,12 +45,24 @@ export const login= async (req, res) => {
             message:'Invalid email or password'
         });
     }
-    const user=await UserModel.findOne({email});
-    if(!user){
-        return res.status(401).send({
-            success:false,
-            message:"The email is not registered"
-        })
+    let user = await UserModel.findOne({ email });
+    let role = 'User';
+
+    if (!user) {
+      user = await TutorModel.findOne({ email });
+      role = 'Tutor';
+    }
+
+    if (!user) {
+      user = await TuitionCenterModel.findOne({ email });
+      role = 'Tuition Center';
+    }
+
+    if (!user) {
+      return res.status(401).send({
+        success: false,
+        message: "The email is not registered"
+      });
     }
     const match=await comparePassword(password,user.password)
     if(!match){
