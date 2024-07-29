@@ -18,7 +18,9 @@ export const getAllUsers = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const user = await UserModel.findByIdAndDelete(req.params.id);
+    const {id} = req.params.id;
+    console.log(id);
+    const user = await UserModel.findByIdAndDelete(id);
     if (!user) {
       return res.status(404).send({
         success: false,
