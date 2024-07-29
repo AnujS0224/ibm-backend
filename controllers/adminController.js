@@ -18,14 +18,16 @@ export const getAllUsers = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const {id} = req.params.id;
-    console.log(id);
-    const user = await UserModel.findByIdAndDelete(id);
+    const {id} = req.params;
+    const user = await UserModel.findByIdAndDelete(id); 
     if (!user) {
-      return res.status(404).send({
-        success: false,
-        message: 'User not found',
-      });
+      const tutor = await Tutor.findByIdAndDelete(id);
+      if(!tutor){
+        const center = await TuitionCenter.findByIdAndDelete(id);
+        if(!center){
+          return res.status(404).jons({error:"User Not found"});
+        }
+      }
     }
     res.json({ success: true, message: 'User deleted successfully' });
   } catch (error) {
