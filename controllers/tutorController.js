@@ -141,3 +141,16 @@ export const getAllTutors = async (req, res, next) => {
     });
   }
 };
+
+export const getLatestTutors = async (req, res, next) => {
+  try {
+    const latestTutors = await Tutor.find().sort({ createdAt: -1 }).limit(10);
+    res.status(200).send({ success: true, latestTutors });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'Error fetching latest tutors',
+      error,
+    });
+  }
+};

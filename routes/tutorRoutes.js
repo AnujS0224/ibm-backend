@@ -1,5 +1,5 @@
 import express from 'express';
-import { createTutorProfile, deleteTutorProfile, getAllTutors, getTutorProfile, updateTutorProfile } from '../controllers/tutorController.js';
+import { createTutorProfile, deleteTutorProfile, getAllTutors, getLatestTutors, getTutorProfile, updateTutorProfile } from '../controllers/tutorController.js';
 import {singleUpload} from "../middleware/multer.js"
 
 const router = express.Router();
@@ -10,5 +10,6 @@ router.get('/get-tutor/:id', getTutorProfile);
 router.put('/update-tutor/:id',singleUpload, updateTutorProfile);
 router.delete('/delete/:id',  deleteTutorProfile);
 router.get('/all-tutors', getAllTutors); 
+router.get('/latest-tutors', getLatestTutors); 
 
 export default router;
