@@ -1,7 +1,8 @@
-import User  from "../Models/userModel.js";
+import User  from "../models/userModel.js";
 export const adminMiddleware = async (req, res, next) => {
     try {
       const { id } = req.query;
+      console.log(id);
   
       if (!id) {
         return next(new ErrorHandler('Login Required', 401));
