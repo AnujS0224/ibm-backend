@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    required: [true, "Please upload photo"],
+    default:"https://res.cloudinary.com/dxt2i61hy/image/upload/v1722313054/bwgirerdkidcjsc1bs6g.png",
   },
   role: {
     type: String,

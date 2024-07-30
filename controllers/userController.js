@@ -6,11 +6,10 @@ import JWT from 'jsonwebtoken';
 
 export const register = async (req, res) => {
     try {
-    const { name, email, password,role } = req.body;
-    const photo=req.file;
-    if(!name || !email || !password  || !photo) 
+    const { name, email, password, role, photo } = req.body;
+    if(!name || !email || !password ){ 
         return res.send({message:'All the fields are mandatory'})
-
+    }
     const existinguser=await UserModel.findOne({email})
     if(existinguser){
         return res.status(200).send({
@@ -19,7 +18,7 @@ export const register = async (req, res) => {
         })
     } 
     const hashedPassword=await hashPassword(password)
-    const user =await new UserModel({ name, email, password:hashedPassword,photo:photo.path, role }).save();
+    const user =await new UserModel({ name, email, password:hashedPassword,photo:photo, role }).save();
     res.status(201).send({
         success:true,
         message:"User Register Successfully",
@@ -80,6 +79,7 @@ export const login= async (req, res) => {
             email:user.email,
             role:user.role,
             id:user._id,
+            photo:user.photo || "",
         },
         token,
     });
