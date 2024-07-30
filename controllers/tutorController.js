@@ -3,8 +3,7 @@ import { hashPassword } from "../helper/authhelper.js";
 
 export const createTutorProfile = async (req, res, next) => {
   try {
-    const { name, email, password, subjects, bio, availability,fees  } = req.body;
-    const photo=req.file;
+    const { name, email, password, subjects, bio, availability, fees, photo  } = req.body;
 
     if (!name || !email || !password || !bio || !subjects || !availability|| !fees ||!photo) {
       return res.status(400).send({ message: 'All fields are required' });
@@ -33,7 +32,7 @@ export const createTutorProfile = async (req, res, next) => {
       bio,
       availability,
       fees: feeObject,
-      photo:photo.path
+      photo:photo
      });
     await tutor.save();
 
@@ -71,8 +70,7 @@ export const getTutorProfile = async (req, res, next) => {
 export const updateTutorProfile = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, email, subjects, bio, availability,fees } = req.body;
-    const photo=req.file;
+    const { name, email, subjects, bio, availability,fees , photo} = req.body;
     const tutor=await Tutor.findById(id);
     
     if (!tutor) {
@@ -94,9 +92,7 @@ export const updateTutorProfile = async (req, res, next) => {
     tutor.email=email||tutor.email;
     tutor.bio=bio||tutor.bio;
     tutor.availability=availability||tutor.availability;
-    if (photo) {
-      tutor.photo = photo.path;
-    }
+    tutor.photo = photo || tutor.photo;
     const updateTutor=await tutor.save();
     res.status(200).json({
       success:true, message: 

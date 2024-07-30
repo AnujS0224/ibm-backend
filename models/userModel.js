@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const userSchema = new mongoose.Schema({
   name: { 
@@ -17,7 +20,7 @@ const userSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    default:"https://res.cloudinary.com/dxt2i61hy/image/upload/v1722313054/bwgirerdkidcjsc1bs6g.png",
+    default:process.env.DEFAULT_UPLOAD,
   },
   role: {
     type: String,

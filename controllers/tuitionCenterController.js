@@ -3,8 +3,7 @@ import { hashPassword } from '../helper/authhelper.js';
 
 export const createTuitionCenterProfile = async (req, res, next) => {
   try {
-    const { name, email, password, location, contactNumber, courses, description,fees  } = req.body;
-    const photo=req.file;
+    const { name, email, password, location, contactNumber, courses, description,fees, photo  } = req.body;
     if (!name || !email || !password || !location || !contactNumber || !courses || !description||!fees||!photo) {
       return res.status(400).send({ message: 'All fields are required' });
     }
@@ -39,7 +38,7 @@ export const createTuitionCenterProfile = async (req, res, next) => {
       courses:courseArray, 
       description,
       fees:feeObject,
-      photo:photo.path 
+      photo:photo, 
     }).save();
 
     res.status(201).send({
@@ -77,8 +76,7 @@ export const getTuitionCenterProfile = async (req, res, next) => {
 export const updateTuitionCenterProfile = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, email, password, location, contactNumber, courses, description,fees} = req.body;
-    const photo =req.file;
+    const { name, email, password, location, contactNumber, courses, description,fees,photo} = req.body;
     const tuitionCenter = await TuitionCenter.findById(id);
 
     if (!tuitionCenter) {
@@ -91,9 +89,7 @@ export const updateTuitionCenterProfile = async (req, res, next) => {
     tuitionCenter.contactNumber = contactNumber || tuitionCenter.contactNumber;
     tuitionCenter.courses =  courses ? courses.split(',').map(course => course.trim()) : tuitionCenter.courses;
     tuitionCenter.description = description || tuitionCenter.description;
-    if (photo) {
-      tuitionCenter.photo = photo.path;
-    }
+    tuitionCenter.photo = photo || tuitionCenter.photo;
     if (fees) {
       try {
         tuitionCenter.fees = JSON.parse(fees); 

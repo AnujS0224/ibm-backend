@@ -1,4 +1,7 @@
 import mongoose from 'mongoose';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const tutorSchema = new mongoose.Schema({
   name: { 
@@ -16,7 +19,7 @@ const tutorSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    required: [true, "Please upload photo"],
+    default:process.env.DEFAULT_UPLOAD,
   },
   bio:{
     type:String,
