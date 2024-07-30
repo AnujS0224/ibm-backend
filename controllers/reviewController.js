@@ -3,7 +3,8 @@ import Tutor from '../models/tutorModel.js';
 import TuitionCenter from '../models/tuitioncenterModel.js';
 
 // Create a new review
-export const createReview = async (req, res) => {
+// Create or update a review
+export const createOrUpdateReview = async (req, res) => {
   try {
     const { userId, reviewText, rating, reviewedEntityId, reviewedEntityType } = req.body;
 
@@ -11,6 +12,9 @@ export const createReview = async (req, res) => {
       return res.status(400).send({ message: 'All fields are required' });
     }
 
+    if (reviewText.trim() === '') {
+      return res.status(400).send({ message: 'Review text cannot be empty' });
+    }
 
     let entity;
     if (reviewedEntityType === 'Tutor') {
@@ -23,15 +27,25 @@ export const createReview = async (req, res) => {
       return res.status(404).send({ message: `${reviewedEntityType} not found` });
     }
 
-    const review =await new Review({ userId, reviewText, rating, reviewedEntityId, reviewedEntityType }).save();
+    // Check if a review already exists for this user and entity
+    let review = await Review.findOne({ userId, reviewedEntityId, reviewedEntityType });
 
-    entity.reviews.push(review._id);
-    await entity.save();
-
-    res.status(201).send({ message: 'Review created successfully', review });
+    if (review) {
+      // Update existing review
+      review.reviewText = reviewText;
+      review.rating = rating;
+      await review.save();
+      return res.status(200).send({ message: 'Review updated successfully', review });
+    } else {
+      // Create new review
+      review = await new Review({ userId, reviewText, rating, reviewedEntityId, reviewedEntityType }).save();
+      entity.reviews.push(review._id);
+      await entity.save();
+      return res.status(201).send({ message: 'Review created successfully', review });
+    }
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'Error creating review', error });
+    res.status(500).send({ message: 'Error processing review', error: error.message });
   }
 };
 
