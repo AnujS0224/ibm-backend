@@ -123,5 +123,44 @@ export const forgotPassword = async (req, res) => {
         error
       });
     }
-  };
+};
   
+
+export const updateUser = async (req, res) => {
+  try {
+      const { userId } = req.params;
+      const { name, email, password, profileInfo } = req.body;
+
+      const user = await UserModel.findById(userId);
+      if (!user) {
+          return res.status(404).send({ success: false, message: "User not found" });
+      }
+
+      if (name) user.name = name;
+      if (email) user.email = email;
+      if (password) user.password = await hashPassword(password);
+      if (profileInfo) user.profileInfo = profileInfo;
+      if (req.file) user.photo = req.file.path;
+
+      await user.save();
+
+      res.status(200).send({
+          success: true,
+          message: "User updated successfully",
+          user: {
+              name: user.name,
+              email: user.email,
+              role: user.role,
+              id: user._id,
+              photo: user.photo,
+          },
+      });
+  } catch (error) {
+      console.log(error);
+      res.status(500).send({
+          success: false,
+          message: 'Error updating user details',
+          error,
+      });
+  }
+};

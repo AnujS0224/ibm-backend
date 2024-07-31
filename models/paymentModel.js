@@ -9,12 +9,6 @@ const paymentSchema = new mongoose.Schema({
     type: Number, 
     required: true 
     },
-    status: { 
-      type: String,
-      enum: ['paid', 'pending', 'rejected'], 
-      default: 'pending', 
-      required: true 
-    },
     paymentIntentId:{
       type:String,
       required:true
