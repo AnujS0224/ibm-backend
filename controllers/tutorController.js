@@ -3,42 +3,42 @@ import { hashPassword } from "../helper/authhelper.js";
 
 export const createTutorProfile = async (req, res, next) => {
   try {
-    const { name, email, password, subjects, bio, availability, fees, photo  } = req.body;
+    const { name, email, password, subjects, bio, availability, fees, photo } = req.body;
 
-    if (!name || !email || !password || !bio || !subjects || !availability|| !fees ||!photo) {
+    if (!name || !email || !password || !bio || !subjects || !availability || !fees || !photo) {
       return res.status(400).send({ message: 'All fields are required' });
     }
 
-    const subjectArray = subjects.split(',').map(subject => subject.trim());
-    const feeObject = JSON.parse(fees);
+    const subjectArray = JSON.parse(subjects); // Parse subjects as an array
+    const feeObject = JSON.parse(fees); // Parse fees as an object
 
-     // Validate that fees include all subjects
-     const missingFees = subjectArray.filter(subject => !(subject in feeObject));
-     if (missingFees.length > 0) {
-       return res.status(400).send({ message: `Missing fees for subjects: ${missingFees.join(', ')}` });
-     }
+    // Validate that fees include all subjects
+    const missingFees = subjectArray.filter(subject => !(subject in feeObject));
+    if (missingFees.length > 0) {
+      return res.status(400).send({ message: `Missing fees for subjects: ${missingFees.join(', ')}` });
+    }
 
     const existingTutor = await Tutor.findOne({ email });
     if (existingTutor) {
       return res.status(400).send({ message: 'Tutor profile already exists' });
     }
 
-    const hashedPassword=await hashPassword(password)
+    const hashedPassword = await hashPassword(password);
     const tutor = new Tutor({
-      name, 
-      email, 
-      password:hashedPassword,
-      subjects:subjectArray, 
+      name,
+      email,
+      password: hashedPassword,
+      subjects: subjectArray,
       bio,
       availability,
       fees: feeObject,
-      photo:photo
-     });
+      photo
+    });
     await tutor.save();
 
     res.status(201).send({
-      success:true,
-      message:"Tutor created successfully",
+      success: true,
+      message: "Tutor created successfully",
       tutor
     });
   } catch (error) {

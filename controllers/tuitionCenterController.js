@@ -3,18 +3,13 @@ import { hashPassword } from '../helper/authhelper.js';
 
 export const createTuitionCenterProfile = async (req, res, next) => {
   try {
-    const { name, email, password, location, contactNumber, courses, description,fees, photo  } = req.body;
-    if (!name || !email || !password || !location || !contactNumber || !courses || !description||!fees||!photo) {
+    const { name, email, password, location, contactNumber, courses, description, fees, photo } = req.body;
+    if (!name || !email || !password || !location || !contactNumber || !courses || !description || !fees || !photo) {
       return res.status(400).send({ message: 'All fields are required' });
     }
 
-    const courseArray = courses.split(',').map(course => course.trim());
-    let feeObject;
-    try {
-      feeObject = JSON.parse(fees);
-    } catch (error) {
-      return res.status(400).send({ message: 'Invalid fees format' });
-    }
+    const courseArray = JSON.parse(courses);
+    const feeObject = JSON.parse(fees);
 
     // Validate that fees include all courses
     const missingFees = courseArray.filter(course => !(course in feeObject));
@@ -29,21 +24,21 @@ export const createTuitionCenterProfile = async (req, res, next) => {
 
     const hashedPassword = await hashPassword(password);
 
-    const tuitionCenter =await new TuitionCenter({ 
+    const tuitionCenter = await new TuitionCenter({ 
       name, 
       email, 
       password: hashedPassword, 
       location, 
       contactNumber, 
-      courses:courseArray, 
+      courses: courseArray, 
       description,
-      fees:feeObject,
-      photo:photo, 
+      fees: feeObject,
+      photo
     }).save();
 
     res.status(201).send({
-      success:true,
-      message:"Tuiton center created successfully",
+      success: true,
+      message: "Tuition center created successfully",
       tuitionCenter
     });
   } catch (error) {
