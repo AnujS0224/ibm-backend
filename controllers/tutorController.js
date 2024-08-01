@@ -150,3 +150,27 @@ export const getLatestTutors = async (req, res, next) => {
     });
   }
 };
+
+export const searchTutors = async (req, res) => {
+  console.log("enterd in search tutors")
+  try {
+    const { name } = req.query; // Retrieve the 'name' query parameter
+    if (!name) {
+      return res.status(400).send({ message: 'Search query is required' });
+    }
+
+    const tutors = await Tutor.find({ name: { $regex: name, $options: 'i' } }); // Use regex for case-insensitive search
+
+    if (tutors.length === 0) {
+      return res.status(404).send({ message: 'No tutors found' });
+    }
+
+    res.status(200).json(tutors);
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'Error fetching search results',
+      error,
+    });
+  }
+};
