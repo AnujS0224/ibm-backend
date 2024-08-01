@@ -155,3 +155,18 @@ export const getAllTuitionCenters = async (req, res, next) => {
     });
   }
 };
+
+export const searchTuitionCenters = async (req, res) => {
+  try {
+    const query = req.query.name || '';
+    console.log("tuitioncenter", query);
+    const tuitionCenters = await TuitionCenter.find({ name: new RegExp(query, 'i') });
+    res.status(200).json(tuitionCenters);
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'Error searching for tuition centers',
+      error,
+    });
+  }
+};

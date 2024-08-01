@@ -6,7 +6,8 @@ dotenv.config();
 const tuitionCenterSchema = new mongoose.Schema({
   name: { 
     type: String, 
-    required: true
+    required: true,
+    index : true
   },
   email: { 
     type: String,

@@ -6,7 +6,7 @@ import connectDB from "./config/db.js"
 import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import tutorRoutes from './routes/tutorRoutes.js';
-import tuitionCenterRoutes from './routes/tuitionCenterRoutes.js';
+import tuitionCenterRoutes from './routes/tuitioncenterRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
