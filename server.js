@@ -33,6 +33,9 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/payments', paymentRoutes);
 
 const PORT = process.env.PORT || 8080;
+app.get("/", (req, res) => {
+  res.send("API Working with /api/v1");
+});
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
