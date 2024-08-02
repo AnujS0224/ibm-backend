@@ -1,7 +1,7 @@
 // routes/adminRoutes.js
 import express from 'express';
 import { getAllUsers, deleteUser, getAllTutors, getAllTuitionCenter, getAllStudents } from '../controllers/adminController.js';
-import { authMiddleware } from '../middleware/authMiddleware.js';
+import { authMiddleware } from '../middleware/authmiddleware.js';
 import { adminMiddleware } from '../middleware/adminMiddleware.js';
 
 const router = express.Router();
