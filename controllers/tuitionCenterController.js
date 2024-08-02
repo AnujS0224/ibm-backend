@@ -127,8 +127,8 @@ export const deleteTuitionCenterProfile = async (req, res, next) => {
 
 export const getLatestTuitionCenters = async (req, res, next) => {
   try {
-    const tuitionCenters = await TuitionCenter.find().sort({ createdAt: -1 }).limit(10);
-    res.status(200).json(tuitionCenters);
+    const latesttuitionCenters = await TuitionCenter.find().sort({ createdAt: -1 }).limit(10);
+    res.status(200).json({success:true,latesttuitionCenters});
   } catch (error) {
     res.status(500).send({
       success: false,
